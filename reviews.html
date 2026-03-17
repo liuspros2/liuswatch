@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie Reviews — CineGuide</title>
+<meta name="description" content="In-depth movie reviews, rankings, and film analysis. Expert opinions on the best movies to watch right now.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--card:#16161f;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#f0eff8;--muted:#8887a0;--accent:#e8412c;--accent2:#ff6b4a;--gold:#f5c842;--teal:#2de8c8;--font-display:'Bebas Neue',sans-serif;--font-serif:'DM Serif Display',serif;--font-body:'DM Sans',sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;background:rgba(10,10,15,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{font-family:var(--font-display);font-size:28px;letter-spacing:2px;color:var(--text);text-decoration:none;}
+.logo span{color:var(--accent);}
+.nav-links{display:flex;gap:28px;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--text);}
+.nav-search{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 14px;}
+.nav-search input{background:none;border:none;outline:none;color:var(--text);font-family:var(--font-body);font-size:13px;width:180px;}
+.nav-search input::placeholder{color:var(--muted);}
+
+.page-header{padding:120px 40px 60px;position:relative;}
+.page-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 70% at 80% 30%,rgba(245,200,66,0.06) 0%,transparent 70%);}
+.breadcrumb{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;}
+.breadcrumb a{color:var(--muted);text-decoration:none;}
+.breadcrumb span{color:var(--accent);margin:0 8px;}
+.page-title{font-family:var(--font-display);font-size:clamp(60px,10vw,110px);letter-spacing:2px;line-height:0.9;margin-bottom:16px;}
+.page-title em{font-family:var(--font-serif);font-style:italic;color:var(--gold);}
+.page-sub{font-size:15px;color:var(--muted);line-height:1.7;max-width:500px;}
+
+/* FEATURED REVIEW (hero article) */
+.featured-review{margin:0 40px 60px;position:relative;border-radius:16px;overflow:hidden;min-height:480px;cursor:pointer;}
+.fr-backdrop{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.fr-grad{position:absolute;inset:0;background:linear-gradient(to right,rgba(10,10,15,0.97) 40%,rgba(10,10,15,0.5) 70%,transparent 100%);}
+.fr-content{position:relative;z-index:1;padding:60px 50px;max-width:560px;}
+.fr-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(245,200,66,0.15);border:1px solid rgba(245,200,66,0.3);border-radius:3px;padding:4px 12px;margin-bottom:20px;font-size:10px;font-weight:700;letter-spacing:0.15em;color:var(--gold);text-transform:uppercase;}
+.fr-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);}
+.fr-title{font-family:var(--font-display);font-size:52px;letter-spacing:1px;line-height:1;margin-bottom:8px;}
+.fr-subtitle{font-family:var(--font-serif);font-style:italic;font-size:18px;color:var(--muted);margin-bottom:16px;}
+.fr-meta{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-bottom:20px;align-items:center;}
+.fr-score{font-family:var(--font-display);font-size:48px;color:var(--gold);line-height:1;}
+.fr-score-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+.fr-excerpt{font-size:14px;color:rgba(240,239,248,0.75);line-height:1.8;margin-bottom:24px;}
+.read-more{display:inline-flex;align-items:center;gap:8px;color:var(--gold);font-size:13px;font-weight:600;text-decoration:none;border-bottom:1px solid rgba(245,200,66,0.4);padding-bottom:3px;}
+
+/* REVIEW GRID */
+.reviews-section{padding:0 40px 60px;}
+.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;}
+.section-title{font-family:var(--font-display);font-size:42px;letter-spacing:1px;}
+.section-title span{color:var(--gold);}
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
+.review-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.2s;text-decoration:none;display:block;}
+.review-card:hover{transform:translateY(-4px);border-color:var(--border2);box-shadow:0 16px 40px rgba(0,0,0,0.5);}
+.rc-thumb{height:180px;overflow:hidden;position:relative;}
+.rc-thumb img{width:100%;height:100%;object-fit:cover;transition:transform 0.3s;}
+.review-card:hover .rc-thumb img{transform:scale(1.05);}
+.rc-score-badge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);border-radius:6px;padding:6px 10px;text-align:center;}
+.rc-score-big{font-family:var(--font-display);font-size:24px;color:var(--gold);line-height:1;}
+.rc-score-max{font-size:10px;color:var(--muted);}
+.rc-category{position:absolute;top:12px;left:12px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:3px;letter-spacing:0.08em;text-transform:uppercase;}
+.cat-must{background:rgba(232,65,44,0.9);color:white;}
+.cat-good{background:rgba(45,232,200,0.9);color:#0a1a18;}
+.cat-skip{background:rgba(136,135,160,0.9);color:white;}
+.rc-body{padding:18px 20px;}
+.rc-title{font-family:var(--font-display);font-size:22px;letter-spacing:0.5px;margin-bottom:4px;}
+.rc-subtitle{font-family:var(--font-serif);font-style:italic;font-size:13px;color:var(--muted);margin-bottom:10px;}
+.rc-meta{display:flex;gap:10px;font-size:11px;color:var(--muted);margin-bottom:10px;}
+.rc-excerpt{font-size:13px;color:rgba(240,239,248,0.65);line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.rc-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.rc-verdict{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;}
+.verdict-watch{color:var(--teal);}
+.verdict-skip{color:var(--muted);}
+.verdict-must{color:var(--accent);}
+.rc-date{font-size:11px;color:var(--muted);}
+
+/* LIST ARTICLES */
+.lists-section{padding:0 40px 80px;}
+.list-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.list-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:grid;grid-template-columns:120px 1fr;cursor:pointer;transition:all 0.2s;text-decoration:none;color:var(--text);}
+.list-card:hover{border-color:var(--border2);transform:translateX(4px);}
+.list-thumb{overflow:hidden;}
+.list-thumb img{width:100%;height:100%;object-fit:cover;}
+.list-body{padding:16px 18px;}
+.list-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:6px;}
+.list-title{font-size:14px;font-weight:500;line-height:1.4;margin-bottom:6px;}
+.list-sub{font-size:11px;color:var(--muted);}
+
+.ad-slot{margin:0 40px 40px;background:var(--bg3);border:1px dashed var(--border2);border-radius:8px;padding:18px;text-align:center;color:var(--muted);font-size:12px;}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:40px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);}
+footer a{color:var(--teal);text-decoration:none;}
+@media(max-width:900px){nav{padding:0 20px;}.nav-links,.nav-search{display:none;}.page-header{padding:100px 20px 40px;}.featured-review{margin:0 20px 40px;min-height:360px;}.fr-content{padding:30px 24px;max-width:100%;}.reviews-section,.lists-section{padding:0 20px 50px;}.reviews-grid{grid-template-columns:1fr;}.list-grid{grid-template-columns:1fr;}.ad-slot{margin:0 20px 30px;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">CINE<span>GUIDE</span></a>
+  <div class="nav-links">
+    <a href="trending.html">Trending</a>
+    <a href="genres.html">Genres</a>
+    <a href="nollywood.html">Nollywood</a>
+    <a href="reviews.html" class="active">Reviews</a>
+    <a href="about.html">About</a>
+  </div>
+  <div class="nav-search"><span>🔍</span><input type="text" placeholder="Search reviews..."></div>
+</nav>
+
+<div class="page-header">
+  <div class="breadcrumb"><a href="index.html">Home</a><span>›</span>Reviews</div>
+  <h1 class="page-title">HONEST<br><em>Reviews</em></h1>
+  <p class="page-sub">No sponsored opinions. Just real takes on what's worth your time — and what isn't.</p>
+</div>
+
+<!-- FEATURED REVIEW -->
+<div class="featured-review">
+  <img class="fr-backdrop" src="https://image.tmdb.org/t/p/w1280/xDMIl84Qo5Tsu62c9DGWhmPI67A.jpg" alt="Wakanda Forever">
+  <div class="fr-grad"></div>
+  <div class="fr-content">
+    <div class="fr-tag">⭐ Review of the Week</div>
+    <h2 class="fr-title">OPPENHEIMER</h2>
+    <p class="fr-subtitle">Christopher Nolan's most ambitious film yet</p>
+    <div class="fr-meta">
+      <span>Drama / History · 2023</span>
+      <span>·</span>
+      <span>3h 1min</span>
+      <span>·</span>
+      <span>By CineGuide Editors</span>
+    </div>
+    <div style="display:flex;gap:20px;align-items:center;margin-bottom:20px;">
+      <div><div class="fr-score">9.2</div><div class="fr-score-label">CineGuide Score</div></div>
+      <div style="flex:1;height:1px;background:rgba(255,255,255,0.1)"></div>
+      <div style="text-align:right"><div style="font-size:13px;color:var(--gold)">⭐ 8.9</div><div style="font-size:11px;color:var(--muted)">TMDB Rating</div></div>
+    </div>
+    <p class="fr-excerpt">Nolan has made an atomic bomb of a film — and we mean that as the highest possible compliment. Oppenheimer is a three-hour intellectual thriller that never once loses your attention. Cillian Murphy delivers a performance of extraordinary restraint, and the IMAX sequences of the Trinity test may be the most viscerally terrifying thing ever committed to film without a single drop of blood.</p>
+    <a href="javascript:void(0)" class="read-more">Read Full Review →</a>
+  </div>
+</div>
+
+<div class="ad-slot">📢 Advertisement — Google AdSense Leaderboard (728×90)</div>
+
+<!-- REVIEW GRID -->
+<div class="reviews-section">
+  <div class="section-header">
+    <h2 class="section-title">RECENT <span>REVIEWS</span></h2>
+  </div>
+  <div class="reviews-grid" id="reviewGrid"></div>
+</div>
+
+<div class="ad-slot">📢 Advertisement — Google AdSense Rectangle (336×280)</div>
+
+<!-- LIST ARTICLES -->
+<div class="lists-section">
+  <div class="section-header">
+    <h2 class="section-title">TOP <span>LISTS</span></h2>
+  </div>
+  <div class="list-grid" id="listGrid"></div>
+</div>
+
+<footer>
+  <span>© 2025 CineGuide — Movie data via <a href="https://themoviedb.org">TMDB</a>. We do not host video content.</span>
+  <span style="display:flex;gap:20px;"><a href="about.html">About</a><a href="about.html#privacy">Privacy</a><a href="about.html#dmca">DMCA</a></span>
+</footer>
+
+<script>
+const reviews = [
+  {title:"Dune: Part Two",subtitle:"The year's most spectacular film",score:"9.1",category:"MUST WATCH",catClass:"cat-must",verdict:"Must Watch",verdictClass:"verdict-must",year:2024,genre:"Sci-Fi",runtime:"2h 47m",excerpt:"Denis Villeneuve completes his masterwork. Part Two is everything Part One promised and more — a complete, epic, emotionally devastating film that earns every one of its 167 minutes.",thumb:"https://image.tmdb.org/t/p/w500/xOMo8BRK7PfcJv9JCnx7s5hj0eD.jpg",date:"Mar 2024"},
+  {title:"Deadpool & Wolverine",subtitle:"The MCU actually did it",score:"7.4",category:"WORTH IT",catClass:"cat-good",verdict:"Watch It",verdictClass:"verdict-watch",year:2024,genre:"Action",runtime:"2h 8m",excerpt:"Raunchy, irreverent, and surprisingly emotional. Reynolds and Jackman have a chemistry that elevates what could have been a lazy fan-service cash grab into something genuinely fun.",thumb:"https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",date:"Aug 2024"},
+  {title:"Joker: Folie à Deux",subtitle:"A bold misfire",score:"5.2",category:"SKIP IT",catClass:"cat-skip",verdict:"Skip It",verdictClass:"verdict-skip",year:2024,genre:"Drama",runtime:"2h 18m",excerpt:"Todd Phillips had something to say with the original. Here he seems uncertain of what that was. The musical sequences divide rather than deepen, and Phoenix is wasted on material that never builds to anything meaningful.",thumb:"https://image.tmdb.org/t/p/w500/j3Z3XktmWB1VhsS8iXNCStPKnEl.jpg",date:"Oct 2024"},
+  {title:"Inside Out 2",subtitle:"Pixar finds its heart again",score:"8.2",category:"MUST WATCH",catClass:"cat-must",verdict:"Must Watch",verdictClass:"verdict-must",year:2024,genre:"Animation",runtime:"1h 40m",excerpt:"Anxiety is the perfect antagonist for a sequel about growing up — because it's the emotion we least expect from childhood and the one that defines adolescence. Smart, warm, and necessary.",thumb:"https://image.tmdb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg",date:"Jun 2024"},
+  {title:"The Substance",subtitle:"Body horror at its most savage",score:"7.8",category:"WORTH IT",catClass:"cat-good",verdict:"Watch It",verdictClass:"verdict-watch",year:2024,genre:"Horror",runtime:"2h 21m",excerpt:"Coralie Fargeat turns the male gaze into a weapon and uses it against itself. Demi Moore is extraordinary. The final act is one of the most unhinged things you'll see in a cinema this decade.",thumb:"https://image.tmdb.org/t/p/w500/lqoMzCcZYEFK729d6qzt349fB4o.jpg",date:"Sep 2024"},
+  {title:"A Tribe Called Judah",subtitle:"Nollywood's proudest moment of 2023",score:"8.5",category:"MUST WATCH",catClass:"cat-must",verdict:"Must Watch",verdictClass:"verdict-must",year:2023,genre:"Nollywood",runtime:"2h 4m",excerpt:"Funke Akindele delivers her most confident work yet — a heist comedy with genuine emotional stakes and a cast that fires on all cylinders. This is the film that proves Nollywood is truly global.",thumb:"https://image.tmdb.org/t/p/w500/cVQW2AwB5cOOLbNLnFSQVJGGhO3.jpg",date:"Dec 2023"},
+];
+
+const lists = [
+  {title:"Best Movies on Netflix Nigeria Right Now",tag:"Netflix Guide",sub:"Updated March 2025 · 12 films",thumb:"https://image.tmdb.org/t/p/w300/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg"},
+  {title:"Top 15 Nollywood Films of All Time",tag:"Nollywood",sub:"The definitive list · Ranked by CineGuide",thumb:"https://image.tmdb.org/t/p/w300/jFsJYcHhWBaHKMXpBQUocoW7nPP.jpg"},
+  {title:"10 Underrated Sci-Fi Films You Missed",tag:"Hidden Gems",sub:"Fan-voted · Updated weekly",thumb:"https://image.tmdb.org/t/p/w300/iuFNMS8vlbQ8KaHHQfzaOi8TkKI.jpg"},
+  {title:"Best Horror Movies to Watch This Month",tag:"Horror",sub:"October Picks · 8 films",thumb:"https://image.tmdb.org/t/p/w300/tFXcEccSQMf3lfhfXKSU9iRBpa3.jpg"},
+  {title:"Every Christopher Nolan Film Ranked",tag:"Director Profile",sub:"From Memento to Oppenheimer",thumb:"https://image.tmdb.org/t/p/w300/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg"},
+  {title:"Movies Better Than the Book",tag:"Adaptation",sub:"Controversial takes · 10 films",thumb:"https://image.tmdb.org/t/p/w300/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg"},
+];
+
+document.getElementById('reviewGrid').innerHTML = reviews.map(r=>`
+  <a class="review-card" href="javascript:void(0)">
+    <div class="rc-thumb">
+      <img src="${r.thumb}" alt="${r.title}" onerror="this.src='https://via.placeholder.com/400x180/16161f/8887a0'">
+      <div class="rc-score-badge"><div class="rc-score-big">${r.score}</div><div class="rc-score-max">/10</div></div>
+      <div class="rc-category ${r.catClass}">${r.category}</div>
+    </div>
+    <div class="rc-body">
+      <h3 class="rc-title">${r.title}</h3>
+      <p class="rc-subtitle">${r.subtitle}</p>
+      <div class="rc-meta"><span>${r.year}</span><span>·</span><span>${r.genre}</span><span>·</span><span>${r.runtime}</span></div>
+      <p class="rc-excerpt">${r.excerpt}</p>
+    </div>
+    <div class="rc-footer">
+      <span class="rc-verdict ${r.verdictClass}">▸ ${r.verdict}</span>
+      <span class="rc-date">${r.date}</span>
+    </div>
+  </a>
+`).join('');
+
+document.getElementById('listGrid').innerHTML = lists.map(l=>`
+  <a class="list-card" href="javascript:void(0)">
+    <div class="list-thumb"><img src="${l.thumb}" alt="${l.title}" onerror="this.src='https://via.placeholder.com/120x100/16161f/8887a0'"></div>
+    <div class="list-body">
+      <div class="list-tag">${l.tag}</div>
+      <div class="list-title">${l.title}</div>
+      <div class="list-sub">${l.sub}</div>
+    </div>
+  </a>
+`).join('');
+</script>
+</body>
+</html>
